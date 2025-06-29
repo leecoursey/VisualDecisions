@@ -3,12 +3,17 @@
     document.querySelectorAll('.vd-diagram').forEach(function(container){
         var dataAttr = container.getAttribute('data-diagram');
         if(!dataAttr) return;
+ ursw1s-codex/design-wordpress-plugin-for-decision-tree
+
+
+ main
         var data;
         try {
             data = JSON.parse(dataAttr);
         } catch(e) {
             return;
         }
+
         data.nodes = data.nodes || [];
         data.links = data.links || [];
 

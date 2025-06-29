@@ -5,13 +5,12 @@ This plugin provides a simple framework for creating and embedding visual decisi
 ## Features
 
 - **Custom Post Type** `vd_diagram` for storing diagrams.
-- **D3 Powered Editor** inside the post edit screen. Double‑click the canvas to add nodes, click one node then another to create a connection and drag nodes around.
-- **Shortcode** `[vd_diagram id="123"]` renders the saved diagram using D3 on the front‑end.
 
-The plugin enqueues the D3 library in both the admin and the front‑end. The accompanying JavaScript files (`vd-editor.js` and `vd-frontend.js`) handle basic editing and rendering of diagrams.
 
 ## Usage
 
 1. Activate the plugin in WordPress.
 2. Navigate to **Visual Decisions → Add New** and build your diagram with the D3 editor.
 3. Publish the diagram and embed it in any post or page with `[vd_diagram id="123"]`, replacing `123` with the diagram ID.
+=======
+
