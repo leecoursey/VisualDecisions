@@ -24,8 +24,9 @@ function vd_register_post_type() {
         'public' => false,
         'show_ui' => true,
         'show_in_menu' => true,
+        'menu_icon' => 'dashicons-share',
         'supports' => array( 'title' ),
-    ) );
+    ));
 }
 add_action( 'init', 'vd_register_post_type' );
 
@@ -44,13 +45,19 @@ add_action( 'add_meta_boxes', 'vd_add_diagram_metabox' );
 
 function vd_diagram_metabox_html( $post ) {
     $data = get_post_meta( $post->ID, '_vd_tree_data', true );
-    echo '<textarea name="vd_tree_data" style="width:100%;height:200px;">' . esc_textarea( $data ) . '</textarea>';
+    wp_nonce_field( 'vd_save_diagram', 'vd_diagram_nonce' );
+
+    echo '<textarea name="vd_tree_data" style="display:none;">' . esc_textarea( $data ) . '</textarea>';
     echo '<div id="vd-editor" style="margin-top:10px;"></div>';
     echo '<p>Use the editor above to arrange your diagram.</p>';
 }
 
 function vd_save_diagram_meta( $post_id ) {
-    if ( array_key_exists( 'vd_tree_data', $_POST ) ) {
+    if ( ! isset( $_POST['vd_diagram_nonce'] ) || ! wp_verify_nonce( $_POST['vd_diagram_nonce'], 'vd_save_diagram' ) ) {
+        return;
+    }
+
+    if ( isset( $_POST['vd_tree_data'] ) ) {
         update_post_meta( $post_id, '_vd_tree_data', wp_unslash( $_POST['vd_tree_data'] ) );
     }
 }
@@ -63,26 +70,27 @@ function vd_diagram_shortcode( $atts ) {
     if ( ! $id ) {
         return '';
     }
+
     $data = get_post_meta( $id, '_vd_tree_data', true );
     if ( ! $data ) {
         return '';
     }
-    // Placeholder container for frontend script
+
     return '<div class="vd-diagram" data-diagram="' . esc_attr( $data ) . '"></div>';
 }
 add_shortcode( 'vd_diagram', 'vd_diagram_shortcode' );
 
-// Enqueue D3 and custom scripts in admin
+// Enqueue D3 and editor scripts for admin
 function vd_admin_scripts( $hook ) {
-    if ( 'vd_diagram' !== get_post_type() ) {
-        return;
+    global $post;
+    if ( isset( $post ) && $post->post_type === 'vd_diagram' ) {
+        wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
+        wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'd3', 'jquery' ), '0.1', true );
     }
-    wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
-    wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'd3', 'jquery' ), '0.1', true );
 }
 add_action( 'admin_enqueue_scripts', 'vd_admin_scripts' );
 
-// Enqueue D3 and frontend renderer
+// Enqueue D3 and renderer for frontend
 function vd_frontend_scripts() {
     wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
     wp_enqueue_script( 'vd-frontend', plugins_url( 'js/vd-frontend.js', __FILE__ ), array( 'd3' ), '0.1', true );
