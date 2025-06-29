@@ -3,12 +3,14 @@
     document.querySelectorAll('.vd-diagram').forEach(function(container){
         var dataAttr = container.getAttribute('data-diagram');
         if(!dataAttr) return;
+
         var data;
         try {
             data = JSON.parse(dataAttr);
         } catch(e) {
             return;
         }
+
         data.nodes = data.nodes || [];
         data.links = data.links || [];
 

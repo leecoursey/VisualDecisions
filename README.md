@@ -5,6 +5,7 @@ This plugin provides a simple framework for creating and embedding visual decisi
 ## Features
 
 - **Custom Post Type** `vd_diagram` for storing diagrams.
+k1jzk5-codex/design-wordpress-plugin-for-decision-tree
 - **D3 Powered Editor** inside the post edit screen. Double‑click the canvas to add nodes, click one node then another to create a connection and drag nodes around.
 - **Shortcode** `[vd_diagram id="123"]` renders the saved diagram using D3 on the front‑end.
 
