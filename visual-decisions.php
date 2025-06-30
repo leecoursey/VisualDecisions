@@ -46,7 +46,6 @@ add_action( 'add_meta_boxes', 'vd_add_diagram_metabox' );
 function vd_diagram_metabox_html( $post ) {
     $data = get_post_meta( $post->ID, '_vd_tree_data', true );
     wp_nonce_field( 'vd_save_diagram', 'vd_diagram_nonce' );
-
     echo '<textarea name="vd_tree_data" style="display:none;">' . esc_textarea( $data ) . '</textarea>';
     echo '<div id="vd-editor" style="margin-top:10px;"></div>';
     echo '<p>Use the editor above to arrange your diagram.</p>';
