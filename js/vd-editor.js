@@ -1,6 +1,6 @@
 // Admin D3 editor with basic add/connect functionality
 (function($){
-    var textarea = document.querySelector('textarea[name="vd_tree_data"]');
+    var textarea = document.querySelector('textarea[name="vd_diagram_data"]');
     if (!textarea) return;
 
     var data;
@@ -70,7 +70,7 @@
         var nodeEnter = nodeSel.enter().append('g').attr('class', 'node');
         nodeEnter.append('circle')
             .attr('r', 20)
-            .attr('fill', '#aaf');
+            .attr('fill', function(d){ return d.content ? '#afa' : '#aaf'; });
         nodeEnter.append('text')
             .attr('text-anchor', 'middle')
             .attr('dy', 4)
@@ -81,14 +81,16 @@
             return 'translate(' + d.x + ',' + d.y + ')';
         });
 
-        nodeSel.select('circle').call(d3.drag()
-            .on('drag', function(event, d) {
-                d.x = event.x;
-                d.y = event.y;
-                d3.select(this.parentNode)
-                    .attr('transform', 'translate(' + d.x + ',' + d.y + ')');
-                render();
-                save();
+        nodeSel.select('circle')
+            .attr('fill', function(d){ return d.content ? '#afa' : '#aaf'; })
+            .call(d3.drag()
+                .on('drag', function(event, d) {
+                    d.x = event.x;
+                    d.y = event.y;
+                    d3.select(this.parentNode)
+                        .attr('transform', 'translate(' + d.x + ',' + d.y + ')');
+                    render();
+                    save();
             })
         );
 
@@ -107,8 +109,12 @@
             if (t !== null) {
                 d.text = t;
                 d3.select(this).select('text').text(t);
-                save();
             }
+            var content = prompt('Terminal content (leave empty for question)', d.content || '');
+            if (content !== null) {
+                d.content = content;
+            }
+            save();
         });
 
         nodeSel.exit().remove();
@@ -122,6 +128,9 @@
             y: coords[1],
             text: 'Question'
         };
+        if(data.nodes.length === 0){
+            node.isStart = true;
+        }
         data.nodes.push(node);
         render();
         save();
