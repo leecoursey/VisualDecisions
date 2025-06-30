@@ -7,7 +7,7 @@
         var data;
         try {
             data = JSON.parse(dataAttr);
-        } catch(e) {
+        } catch (e) {
             return;
         }
 
@@ -21,8 +21,8 @@
             .attr('width', width)
             .attr('height', height);
 
-        function findNode(id){
-            return data.nodes.find(function(n){ return n.id === id; });
+        function findNode(id) {
+            return data.nodes.find(function(n) { return n.id === id; });
         }
 
         // Render links with labels
@@ -42,13 +42,13 @@
         linkSel.append('text')
             .attr('text-anchor', 'middle')
             .attr('dy', -5)
-            .attr('x', function(d){ 
-                var s = findNode(d.source), t = findNode(d.target); 
-                return (s.x + t.x) / 2; 
+            .attr('x', function(d){
+                var s = findNode(d.source), t = findNode(d.target);
+                return (s.x + t.x) / 2;
             })
-            .attr('y', function(d){ 
-                var s = findNode(d.source), t = findNode(d.target); 
-                return (s.y + t.y) / 2; 
+            .attr('y', function(d){
+                var s = findNode(d.source), t = findNode(d.target);
+                return (s.y + t.y) / 2;
             })
             .text(function(d){ return d.label || ''; });
 

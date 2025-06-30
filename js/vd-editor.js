@@ -6,14 +6,14 @@
     var data;
     try {
         data = JSON.parse(textarea.value || '{}');
-    } catch(e) {
-        data = {nodes: [], links: []};
+    } catch (e) {
+        data = { nodes: [], links: [] };
     }
 
     data.nodes = data.nodes || [];
     data.links = data.links || [];
 
-    function save(){
+    function save() {
         textarea.value = JSON.stringify(data);
     }
 
@@ -27,11 +27,11 @@
 
     var selected = null;
 
-    function findNode(id){
-        return data.nodes.find(function(n){ return n.id === id; });
+    function findNode(id) {
+        return data.nodes.find(function(n) { return n.id === id; });
     }
 
-    function render(){
+    function render() {
         // LINKS
         var linkSel = svg.selectAll('g.link').data(data.links, function(d) {
             return d.source + '-' + d.target;
@@ -46,62 +46,65 @@
         linkSel = linkEnter.merge(linkSel);
 
         linkSel.select('line')
-            .attr('x1', function(d){ return findNode(d.source).x; })
-            .attr('y1', function(d){ return findNode(d.source).y; })
-            .attr('x2', function(d){ return findNode(d.target).x; })
-            .attr('y2', function(d){ return findNode(d.target).y; });
+            .attr('x1', function(d) { return findNode(d.source).x; })
+            .attr('y1', function(d) { return findNode(d.source).y; })
+            .attr('x2', function(d) { return findNode(d.target).x; })
+            .attr('y2', function(d) { return findNode(d.target).y; });
 
         linkSel.select('text')
-            .attr('x', function(d){ 
-                var s = findNode(d.source), t = findNode(d.target); 
-                return (s.x + t.x) / 2; 
+            .attr('x', function(d) {
+                var s = findNode(d.source), t = findNode(d.target);
+                return (s.x + t.x) / 2;
             })
-            .attr('y', function(d){ 
-                var s = findNode(d.source), t = findNode(d.target); 
-                return (s.y + t.y) / 2; 
+            .attr('y', function(d) {
+                var s = findNode(d.source), t = findNode(d.target);
+                return (s.y + t.y) / 2;
             })
-            .text(function(d){ return d.label || ''; });
+            .text(function(d) { return d.label || ''; });
 
         linkSel.exit().remove();
 
         // NODES
-        var nodeSel = svg.selectAll('g.node').data(data.nodes, function(d){ return d.id; });
+        var nodeSel = svg.selectAll('g.node').data(data.nodes, function(d) { return d.id; });
 
-        var nodeEnter = nodeSel.enter().append('g').attr('class','node');
+        var nodeEnter = nodeSel.enter().append('g').attr('class', 'node');
         nodeEnter.append('circle')
             .attr('r', 20)
             .attr('fill', '#aaf');
         nodeEnter.append('text')
             .attr('text-anchor', 'middle')
             .attr('dy', 4)
-            .text(function(d){ return d.text; });
+            .text(function(d) { return d.text; });
 
         nodeSel = nodeEnter.merge(nodeSel);
-        nodeSel.attr('transform', function(d){ return 'translate(' + d.x + ',' + d.y + ')'; });
+        nodeSel.attr('transform', function(d) {
+            return 'translate(' + d.x + ',' + d.y + ')';
+        });
 
         nodeSel.select('circle').call(d3.drag()
-            .on('drag', function(event, d){
+            .on('drag', function(event, d) {
                 d.x = event.x;
                 d.y = event.y;
-                d3.select(this.parentNode).attr('transform','translate(' + d.x + ',' + d.y + ')');
+                d3.select(this.parentNode)
+                    .attr('transform', 'translate(' + d.x + ',' + d.y + ')');
                 render();
                 save();
             })
         );
 
-        nodeSel.on('click', function(event, d){
+        nodeSel.on('click', function(event, d) {
             if (selected && selected !== d) {
                 var label = prompt('Link label', '');
-                data.links.push({source: selected.id, target: d.id, label: label || ''});
+                data.links.push({ source: selected.id, target: d.id, label: label || '' });
                 selected = null;
                 render();
                 save();
             } else {
                 selected = d;
             }
-        }).on('dblclick', function(event, d){
+        }).on('dblclick', function(event, d) {
             var t = prompt('Node text', d.text || '');
-            if (t !== null){
+            if (t !== null) {
                 d.text = t;
                 d3.select(this).select('text').text(t);
                 save();
@@ -111,8 +114,7 @@
         nodeSel.exit().remove();
     }
 
-    // Add new node on double-click
-    svg.on('dblclick', function(event){
+    svg.on('dblclick', function(event) {
         var coords = d3.pointer(event);
         var node = {
             id: 'n' + Date.now(),
