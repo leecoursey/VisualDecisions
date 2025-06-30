@@ -8,8 +8,7 @@ This plugin provides a simple framework for creating and embedding visual decisi
 - **D3 Powered Editor** inside the post edit screen. Double-click the canvas to add nodes, click one node then another to create a connection, and drag nodes around.
 - When connecting nodes you will be prompted for a branch label (e.g., "Yes" or "No").
 - **Shortcode** `[vd_diagram id="123"]` renders the saved diagram using D3 on the front‑end.
-
-The plugin enqueues the D3 library in both the admin and the front‑end. The accompanying JavaScript files (`vd-editor.js` and `vd-frontend.js`) handle basic editing and rendering of diagrams.
+- The plugin enqueues the D3 library in both the admin and the front‑end. The accompanying JavaScript files (`vd-editor.js` and `vd-frontend.js`) handle basic editing and rendering of diagrams.
 
 ## Usage
 
