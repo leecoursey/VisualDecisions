@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Visual Decisions
-Description: Create visual decision trees with diagram editor and shortcode support.
+Description: Create visual decision trees with a diagram editor and render them as interactive questionnaires via shortcode.
 Version: 0.1.0
 Author: Auto Generated
 */
@@ -44,9 +44,9 @@ function vd_add_diagram_metabox() {
 add_action( 'add_meta_boxes', 'vd_add_diagram_metabox' );
 
 function vd_diagram_metabox_html( $post ) {
-    $data = get_post_meta( $post->ID, '_vd_tree_data', true );
+    $data = get_post_meta( $post->ID, '_vd_diagram_data', true );
     wp_nonce_field( 'vd_save_diagram', 'vd_diagram_nonce' );
-    echo '<textarea name="vd_tree_data" style="display:none;">' . esc_textarea( $data ) . '</textarea>';
+    echo '<textarea name="vd_diagram_data" style="display:none;">' . esc_textarea( $data ) . '</textarea>';
     echo '<div id="vd-editor" style="margin-top:10px;"></div>';
     echo '<p>Use the editor above to arrange your diagram.</p>';
 }
@@ -56,8 +56,8 @@ function vd_save_diagram_meta( $post_id ) {
         return;
     }
 
-    if ( isset( $_POST['vd_tree_data'] ) ) {
-        update_post_meta( $post_id, '_vd_tree_data', wp_unslash( $_POST['vd_tree_data'] ) );
+    if ( isset( $_POST['vd_diagram_data'] ) ) {
+        update_post_meta( $post_id, '_vd_diagram_data', wp_unslash( $_POST['vd_diagram_data'] ) );
     }
 }
 add_action( 'save_post_vd_diagram', 'vd_save_diagram_meta' );
@@ -70,7 +70,7 @@ function vd_diagram_shortcode( $atts ) {
         return '';
     }
 
-    $data = get_post_meta( $id, '_vd_tree_data', true );
+    $data = get_post_meta( $id, '_vd_diagram_data', true );
     if ( ! $data ) {
         return '';
     }
@@ -81,8 +81,8 @@ add_shortcode( 'vd_diagram', 'vd_diagram_shortcode' );
 
 // Enqueue D3 and editor scripts in admin
 function vd_admin_scripts( $hook ) {
-    global $post;
-    if ( isset( $post ) && $post->post_type === 'vd_diagram' ) {
+    $screen = get_current_screen();
+    if ( isset( $screen->post_type ) && $screen->post_type === 'vd_diagram' ) {
         // Use local version of d3 if available, fallback to CDN
         $d3_path = plugins_url( 'js/d3.min.js', __FILE__ );
         wp_enqueue_script( 'd3', $d3_path );
@@ -93,8 +93,6 @@ add_action( 'admin_enqueue_scripts', 'vd_admin_scripts' );
 
 // Enqueue D3 and renderer for frontend
 function vd_frontend_scripts() {
-    $d3_path = plugins_url( 'js/d3.min.js', __FILE__ );
-    wp_enqueue_script( 'd3', $d3_path );
-    wp_enqueue_script( 'vd-frontend', plugins_url( 'js/vd-frontend.js', __FILE__ ), array( 'd3' ), '0.1', true );
+    wp_enqueue_script( 'vd-frontend', plugins_url( 'js/vd-frontend.js', __FILE__ ), array(), '0.1', true );
 }
 add_action( 'wp_enqueue_scripts', 'vd_frontend_scripts' );
