@@ -11,6 +11,7 @@ This plugin provides a simple framework for creating and embedding visual decisi
 
 The plugin bundles the D3 library locally so it works without relying on a CDN. Both the admin and the front‑end load this script along with `vd-editor.js` and `vd-frontend.js` for basic editing and rendering of diagrams.
 
+
 ## Usage
 
 1. Activate the plugin in WordPress.
