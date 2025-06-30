@@ -81,8 +81,8 @@ add_shortcode( 'vd_diagram', 'vd_diagram_shortcode' );
 
 // Enqueue D3 and editor scripts in admin
 function vd_admin_scripts( $hook ) {
-    global $post;
-    if ( isset( $post ) && $post->post_type === 'vd_diagram' ) {
+    $screen = get_current_screen();
+    if ( isset( $screen->post_type ) && $screen->post_type === 'vd_diagram' ) {
         // Use local version of d3 if available, fallback to CDN
         $d3_path = plugins_url( 'js/d3.min.js', __FILE__ );
         wp_enqueue_script( 'd3', $d3_path );
