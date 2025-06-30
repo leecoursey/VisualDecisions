@@ -79,11 +79,13 @@ function vd_diagram_shortcode( $atts ) {
 }
 add_shortcode( 'vd_diagram', 'vd_diagram_shortcode' );
 
-// Enqueue D3 and editor scripts for admin
+// Enqueue D3 and editor scripts in admin
 function vd_admin_scripts( $hook ) {
     global $post;
     if ( isset( $post ) && $post->post_type === 'vd_diagram' ) {
-        wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
+        // Use local version of d3 if available, fallback to CDN
+        $d3_path = plugins_url( 'js/d3.min.js', __FILE__ );
+        wp_enqueue_script( 'd3', $d3_path );
         wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'd3', 'jquery' ), '0.1', true );
     }
 }
@@ -91,7 +93,8 @@ add_action( 'admin_enqueue_scripts', 'vd_admin_scripts' );
 
 // Enqueue D3 and renderer for frontend
 function vd_frontend_scripts() {
-    wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
+    $d3_path = plugins_url( 'js/d3.min.js', __FILE__ );
+    wp_enqueue_script( 'd3', $d3_path );
     wp_enqueue_script( 'vd-frontend', plugins_url( 'js/vd-frontend.js', __FILE__ ), array( 'd3' ), '0.1', true );
 }
 add_action( 'wp_enqueue_scripts', 'vd_frontend_scripts' );

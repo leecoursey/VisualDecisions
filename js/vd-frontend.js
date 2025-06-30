@@ -58,7 +58,9 @@
             .enter()
             .append('g')
             .attr('class', 'node')
-            .attr('transform', function(d){ return 'translate(' + d.x + ',' + d.y + ')'; });
+            .attr('transform', function(d){
+                return 'translate(' + d.x + ',' + d.y + ')';
+            });
 
         node.append('circle')
             .attr('r', 20)
