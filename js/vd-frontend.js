@@ -10,48 +10,31 @@
             return;
         }
 
-        data.nodes = data.nodes || [];
-        data.links = data.links || [];
+        data.nodeDataArray = data.nodeDataArray || [];
+        data.linkDataArray = data.linkDataArray || [];
 
-        function findNode(id){
-            return data.nodes.find(function(n){ return n.id === id; });
-        }
+        var $go = go.GraphObject.make;
+        var diagram = $go(go.Diagram, container, {
+            allowMove: false,
+            allowCopy: false,
+            allowDelete: false,
+            allowHorizontalScroll: false,
+            allowVerticalScroll: false
+        });
 
-        function outgoing(id){
-            return data.links.filter(function(l){ return l.source === id; });
-        }
+        diagram.nodeTemplate =
+            $go(go.Node, 'Auto',
+                new go.Binding('location', 'loc', go.Point.parse),
+                $go(go.Shape, 'RoundedRectangle', { fill: '#aaf' }),
+                $go(go.TextBlock, { margin: 8 }, new go.Binding('text'))
+            );
 
-        var current = data.nodes.find(function(n){ return n.isStart; }) || data.nodes[0];
-        if(!current) return;
+        diagram.linkTemplate =
+            $go(go.Link,
+                $go(go.Shape),
+                $go(go.Shape, { toArrow: 'Standard' })
+            );
 
-        function render(node){
-            container.innerHTML = '';
-            var options = outgoing(node.id);
-            if(options.length === 0){
-                var endDiv = document.createElement('div');
-                endDiv.className = 'vd-terminal';
-                endDiv.innerHTML = node.content || '';
-                container.appendChild(endDiv);
-                return;
-            }
-            var q = document.createElement('div');
-            q.className = 'vd-question';
-            q.textContent = node.text || node.label || '';
-            container.appendChild(q);
-            options.forEach(function(link){
-                var btn = document.createElement('button');
-                btn.textContent = link.label || '...';
-                btn.addEventListener('click', function(){
-                    var next = findNode(link.target);
-                    if(next){
-                        current = next;
-                        render(next);
-                    }
-                });
-                container.appendChild(btn);
-            });
-        }
-
-        render(current);
+        diagram.model = new go.GraphLinksModel(data.nodeDataArray, data.linkDataArray);
     });
 })();
