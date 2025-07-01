@@ -72,19 +72,19 @@ function vd_diagram_shortcode( $atts ) {
 }
 add_shortcode( 'vd_diagram', 'vd_diagram_shortcode' );
 
-// Enqueue D3 and custom scripts in admin
+// Enqueue GoJS and custom scripts in admin
 function vd_admin_scripts( $hook ) {
     if ( 'vd_diagram' !== get_post_type() ) {
         return;
     }
-    wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
-    wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'd3', 'jquery' ), '0.1', true );
+    wp_enqueue_script( 'gojs', plugins_url( 'js/go.js', __FILE__ ) );
+    wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'gojs', 'jquery' ), '0.1', true );
 }
 add_action( 'admin_enqueue_scripts', 'vd_admin_scripts' );
 
-// Enqueue D3 and frontend renderer
+// Enqueue GoJS and frontend renderer
 function vd_frontend_scripts() {
-    wp_enqueue_script( 'd3', 'https://d3js.org/d3.v7.min.js' );
-    wp_enqueue_script( 'vd-frontend', plugins_url( 'js/vd-frontend.js', __FILE__ ), array( 'd3' ), '0.1', true );
+    wp_enqueue_script( 'gojs', plugins_url( 'js/go.js', __FILE__ ) );
+    wp_enqueue_script( 'vd-frontend', plugins_url( 'js/vd-frontend.js', __FILE__ ), array( 'gojs' ), '0.1', true );
 }
 add_action( 'wp_enqueue_scripts', 'vd_frontend_scripts' );
