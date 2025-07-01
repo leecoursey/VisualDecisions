@@ -1,6 +1,6 @@
 (function($){
     var textarea = document.querySelector('textarea[name="vd_tree_data"]');
-    if(!textarea) return;
+    if (!textarea) return;
 
     var data;
     try {
@@ -8,6 +8,7 @@
     } catch(e) {
         data = {};
     }
+
     data.nodeDataArray = data.nodeDataArray || [];
     data.linkDataArray = data.linkDataArray || [];
 

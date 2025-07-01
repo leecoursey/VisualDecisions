@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Visual Decisions
-Description: Create visual decision trees with diagram editor and shortcode support.
+Description: Create visual decision trees with a diagram editor and render them as interactive questionnaires via shortcode.
 Version: 0.1.0
 Author: Auto Generated
 */
@@ -24,8 +24,9 @@ function vd_register_post_type() {
         'public' => false,
         'show_ui' => true,
         'show_in_menu' => true,
+        'menu_icon' => 'dashicons-share',
         'supports' => array( 'title' ),
-    ) );
+    ));
 }
 add_action( 'init', 'vd_register_post_type' );
 
@@ -43,15 +44,20 @@ function vd_add_diagram_metabox() {
 add_action( 'add_meta_boxes', 'vd_add_diagram_metabox' );
 
 function vd_diagram_metabox_html( $post ) {
-    $data = get_post_meta( $post->ID, '_vd_tree_data', true );
-    echo '<textarea name="vd_tree_data" style="width:100%;height:200px;">' . esc_textarea( $data ) . '</textarea>';
+    $data = get_post_meta( $post->ID, '_vd_diagram_data', true );
+    wp_nonce_field( 'vd_save_diagram', 'vd_diagram_nonce' );
+    echo '<textarea name="vd_diagram_data" style="display:none;">' . esc_textarea( $data ) . '</textarea>';
     echo '<div id="vd-editor" style="margin-top:10px;"></div>';
     echo '<p>Use the editor above to arrange your diagram.</p>';
 }
 
 function vd_save_diagram_meta( $post_id ) {
-    if ( array_key_exists( 'vd_tree_data', $_POST ) ) {
-        update_post_meta( $post_id, '_vd_tree_data', wp_unslash( $_POST['vd_tree_data'] ) );
+    if ( ! isset( $_POST['vd_diagram_nonce'] ) || ! wp_verify_nonce( $_POST['vd_diagram_nonce'], 'vd_save_diagram' ) ) {
+        return;
+    }
+
+    if ( isset( $_POST['vd_diagram_data'] ) ) {
+        update_post_meta( $post_id, '_vd_diagram_data', wp_unslash( $_POST['vd_diagram_data'] ) );
     }
 }
 add_action( 'save_post_vd_diagram', 'vd_save_diagram_meta' );
@@ -63,22 +69,23 @@ function vd_diagram_shortcode( $atts ) {
     if ( ! $id ) {
         return '';
     }
-    $data = get_post_meta( $id, '_vd_tree_data', true );
+
+    $data = get_post_meta( $id, '_vd_diagram_data', true );
     if ( ! $data ) {
         return '';
     }
-    // Placeholder container for frontend script
+
     return '<div class="vd-diagram" data-diagram="' . esc_attr( $data ) . '"></div>';
 }
 add_shortcode( 'vd_diagram', 'vd_diagram_shortcode' );
 
-// Enqueue GoJS and custom scripts in admin
+// Enqueue GoJS and editor scripts in admin
 function vd_admin_scripts( $hook ) {
-    if ( 'vd_diagram' !== get_post_type() ) {
-        return;
+    $screen = get_current_screen();
+    if ( isset( $screen->post_type ) && $screen->post_type === 'vd_diagram' ) {
+        wp_enqueue_script( 'gojs', plugins_url( 'js/go.js', __FILE__ ) );
+        wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'gojs', 'jquery' ), '0.1', true );
     }
-    wp_enqueue_script( 'gojs', plugins_url( 'js/go.js', __FILE__ ) );
-    wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'gojs', 'jquery' ), '0.1', true );
 }
 add_action( 'admin_enqueue_scripts', 'vd_admin_scripts' );
 
