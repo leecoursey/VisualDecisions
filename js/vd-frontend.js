@@ -1,4 +1,3 @@
-// Frontend diagram display using D3
 (function(){
     document.querySelectorAll('.vd-diagram').forEach(function(container){
         var dataAttr = container.getAttribute('data-diagram');
@@ -9,43 +8,31 @@
         } catch(e) {
             return;
         }
-        data.nodes = data.nodes || [];
-        data.links = data.links || [];
+        data.nodeDataArray = data.nodeDataArray || [];
+        data.linkDataArray = data.linkDataArray || [];
 
-        var width = container.clientWidth || 600;
-        var height = 400;
-        var svg = d3.select(container).append('svg')
-            .attr('width', width)
-            .attr('height', height);
+        var $go = go.GraphObject.make;
+        var diagram = $go(go.Diagram, container, {
+            allowMove:false,
+            allowCopy:false,
+            allowDelete:false,
+            allowHorizontalScroll:false,
+            allowVerticalScroll:false
+        });
 
-        function findNode(id){
-            return data.nodes.find(function(n){ return n.id === id; });
-        }
+        diagram.nodeTemplate =
+            $go(go.Node, 'Auto',
+                new go.Binding('location', 'loc', go.Point.parse),
+                $go(go.Shape, 'RoundedRectangle', { fill:'#aaf' }),
+                $go(go.TextBlock, { margin:8 }, new go.Binding('text'))
+            );
 
-        svg.selectAll('line')
-            .data(data.links)
-            .enter()
-            .append('line')
-            .attr('stroke','#000')
-            .attr('x1', function(d){ return findNode(d.source).x; })
-            .attr('y1', function(d){ return findNode(d.source).y; })
-            .attr('x2', function(d){ return findNode(d.target).x; })
-            .attr('y2', function(d){ return findNode(d.target).y; });
+        diagram.linkTemplate =
+            $go(go.Link,
+                $go(go.Shape),
+                $go(go.Shape, { toArrow:'Standard' })
+            );
 
-        var node = svg.selectAll('g.node')
-            .data(data.nodes)
-            .enter()
-            .append('g')
-            .attr('class','node')
-            .attr('transform', function(d){ return 'translate(' + d.x + ',' + d.y + ')'; });
-
-        node.append('circle')
-            .attr('r',20)
-            .attr('fill','#aaf');
-
-        node.append('text')
-            .attr('text-anchor','middle')
-            .attr('dy',4)
-            .text(function(d){ return d.text; });
+        diagram.model = new go.GraphLinksModel(data.nodeDataArray, data.linkDataArray);
     });
 })();
