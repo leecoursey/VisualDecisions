@@ -12,3 +12,5 @@ The editor lets you build a flow of multiple-choice questions and the front-end 
 
 The plugin enqueues a bundled copy of the GoJS library in both the admin and the front‑end. The accompanying JavaScript files (`vd-editor.js` and `vd-frontend.js`) handle basic editing and rendering of diagrams.
 
+The admin editor (`#vd-editor`) defaults to a height of **400px** defined in `css/admin.css`. Adjust this value in the stylesheet if you need a taller or shorter editor area.
+
