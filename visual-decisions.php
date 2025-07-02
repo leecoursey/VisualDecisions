@@ -84,8 +84,10 @@ function vd_admin_scripts( $hook ) {
     $screen = get_current_screen();
     if ( isset( $screen->post_type ) && $screen->post_type === 'vd_diagram' ) {
         wp_enqueue_script( 'gojs', plugins_url( 'js/go.js', __FILE__ ) );
-        wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'gojs', 'jquery' ), '0.1.1', true );
-        wp_enqueue_style( 'vd-admin', plugins_url( 'css/admin.css', __FILE__ ), array(), '0.1.1' );
+
+        wp_enqueue_script( 'vd-editor', plugins_url( 'js/vd-editor.js', __FILE__ ), array( 'gojs', 'jquery' ), '0.1', true );
+        wp_enqueue_style( 'vd-admin', plugins_url( 'css/admin.css', __FILE__ ), array(), '0.1' );
+
     }
 }
 add_action( 'admin_enqueue_scripts', 'vd_admin_scripts' );
