@@ -1,5 +1,5 @@
 (function($){
-    var textarea = document.querySelector('textarea[name="vd_tree_data"]');
+    var textarea = document.querySelector('textarea[name="vd_diagram_data"]');
     if (!textarea) return;
 
     var data;
